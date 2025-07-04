@@ -13,8 +13,13 @@ class Order extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'user_id', 'status', 'total',
-        'shipping_address', 'shipping_city', 'shipping_country', 'shipping_zip'
+        'user_id',
+        'status',
+        'total',
+        'shipping_address',
+        'shipping_city',
+        'shipping_country',
+        'shipping_zip'
     ];
 
     public function user()
@@ -37,4 +42,3 @@ class Order extends Model
         return $this->hasOne(Invoice::class);
     }
 }
-

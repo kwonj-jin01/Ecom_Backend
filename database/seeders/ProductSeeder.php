@@ -20,7 +20,7 @@ class ProductSeeder extends Seeder
         foreach ($categories as $category) {
             // Créer 5-10 produits par catégorie
             $products = Product::factory()
-                ->count(rand(5, 10))
+                ->count(rand(1, 3))
                 ->create(['category_id' => $category->id]);
 
             foreach ($products as $product) {

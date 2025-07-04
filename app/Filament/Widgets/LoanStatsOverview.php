@@ -12,61 +12,67 @@ class LoanStatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
+        $totalVentes = Order::where('status', 'payée')->sum('total');
+        $commandesEnAttente = Order::where('status', 'en_attente')->count();
+        $produitsRupture = Product::where('stock', '<', 1)->count();
+        $totalCommandes = Order::count();
+        $commandesLivrees = Order::where('status', 'livrée')->count();
+
         return [
-             Stat::make('Total Ventes', Order::where('status', 'payée')->sum('total'))
+            Stat::make('Total Ventes', number_format($totalVentes, 0, ',', ' ') . ' F CFA')
                 ->description('Chiffre d’affaires')
                 ->descriptionIcon('heroicon-o-currency-euro')
-                ->color('success'),
+                ->color($totalVentes > 0 ? 'success' : 'danger')
+                ->chart([5, 9, 7, 6, 10, 12, 14])
+                ->extraAttributes([
+                    'class' => $totalVentes > 0
+                        ? 'bg-green-100 text-green-900 animate-fade-in transition duration-500 ease-out'
+                        : 'bg-red-100 text-red-900 animate-shake transition duration-500 ease-in',
+                ]),
 
-            Stat::make('Commandes en attente', Order::where('status', 'en_attente')->count())
-                ->description('À traiter')
-                ->descriptionIcon('heroicon-o-clock')
-                ->color('warning'),
 
-            Stat::make('Clients', User::where('role', 'client')->count())
-                ->description('Comptes clients')
-                ->descriptionIcon('heroicon-o-user-group'),
-
-            Stat::make('Produits en rupture', Product::where('stock', '<', 1)->count())
-                ->description('Stock à réapprovisionner')
-                ->descriptionIcon('heroicon-o-exclamation-triangle')
-                ->color('danger'),
-
-            Stat::make('Total Commandes', 1)
+            Stat::make('Total Commandes', $totalCommandes)
                 ->description('Toutes les commandes reçues')
                 ->descriptionIcon('heroicon-m-clipboard-document-list')
                 ->color('primary')
-                ->chart([5, 9, 7, 6, 10, 12, 14]),
+                ->chart([5, 9, 7, 6, 10, 12, 14])
+                ->extraAttributes([
+                    'class' => 'hover:scale-105 transform transition duration-300 ease-in-out',
+                ]),
 
-            Stat::make('Commandes Livrées', 1000)
+            Stat::make('Commandes en attente', $commandesEnAttente)
+                ->description('À traiter')
+                ->descriptionIcon('heroicon-o-clock')
+                ->color($commandesEnAttente > 5 ? 'warning' : 'success')
+                ->chart([5, 9, 7, 6, 10, 12, 14])
+                ->extraAttributes([
+                    'class' => $commandesEnAttente > 5
+                        ? 'bg-yellow-100 text-yellow-800 animate-pulse'
+                        : 'bg-green-100 text-green-800',
+                ]),
+
+            Stat::make('Produits en rupture', $produitsRupture)
+                ->description('Stock à réapprovisionner')
+                ->descriptionIcon('heroicon-o-exclamation-triangle')
+                ->color($produitsRupture > 0 ? 'danger' : 'info')
+                ->chart([5, 9, 7, 6, 10, 12, 14])
+                ->extraAttributes([
+                    'class' => $produitsRupture > 0
+                        ? 'bg-red-100 text-red-900 animate-bounce'
+                        : 'bg-green-100 text-green-800',
+                ]),
+
+            Stat::make('Commandes Livrées', $commandesLivrees)
                 ->description('Commandes livrées avec succès')
                 ->descriptionIcon('heroicon-m-truck')
-                ->color('success'),
-
-            Stat::make('Revenu Total', '€' . number_format(1, 2))
-                ->description('Montant total encaissé')
-                ->descriptionIcon('heroicon-m-currency-euro')
-                ->color('info'),
-
-            Stat::make('Taux d’Annulation', $this->getCancelRate() . '%')
-                ->description('Commandes annulées vs total')
-                ->descriptionIcon('heroicon-m-x-circle')
-                ->color($this->getCancelRate() > 5 ? 'danger' : 'success'),
-
-            Stat::make('Clients', User::where('role', 'customer')->count())
-                ->description('Nombre de clients enregistrés')
-                ->descriptionIcon('heroicon-m-user-group')
-                ->color('warning'),
+                ->color('warning')
+                ->chart([5, 9, 7, 6, 10, 12, 14])
+                ->extraAttributes([
+                    'class' => 'bg-blue-100 text-blue-800 hover:bg-blue-200 transition duration-300 ease-in-out',
+                ]),
         ];
     }
 
-    private function getCancelRate(): float
-    {
-        $totalOrders = Order::count();
-        $cancelledOrders = Order::where('status', 'cancelled')->count();
-
-        return $totalOrders > 0 ? round(($cancelledOrders / $totalOrders) * 100, 1) : 0;
-    }
 
     protected static ?int $sort = 1;
 }
