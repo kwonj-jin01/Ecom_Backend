@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\ActivityProfitWidget;
 use App\Filament\Widgets\LoanChartWidget;
 use App\Filament\Widgets\LoanStatsOverview;
 use App\Filament\Widgets\RecentActivitiesWidget;
@@ -37,9 +38,9 @@ class LoanDashboard extends Page
         return [
             LoanStatsOverview::class,
             LoanChartWidget::class,
-            UserStatsWidget::class,
             UserStatsCustom::class,
-            // RecentActivitiesWidget::class,
+            ActivityProfitWidget::class,
+            RecentActivitiesWidget::class,
         ];
     }
 }

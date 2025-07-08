@@ -19,7 +19,9 @@
 
         <!-- Graphique circulaire pour les utilisateurs actifs -->
         <div class="sidebar-cards-right">
-            <div class="dark:bg-gray-800 bg-white rounded-xl shadow-md p-6 transition duration-300 hover:shadow-lg">
+            @livewire(\App\Filament\Widgets\ActivityProfitWidget::class)
+
+            {{-- <div class="dark:bg-gray-800 bg-white rounded-xl shadow-md p-6 transition duration-300 hover:shadow-lg">
                 <h3 class="text-lg font-semibold mb-6 text-gray-800 dark:text-gray-200">Active Users Ratio</h3>
 
                 <!-- Donut Chart -->
@@ -62,7 +64,7 @@
                         <span class="font-medium text-gray-700 dark:text-gray-200">4,314</span>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
     </div>

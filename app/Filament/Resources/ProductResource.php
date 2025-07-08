@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -207,7 +208,9 @@ class ProductResource extends Resource
                                     ->required(),
                             ])
                             ->columns(1)
-                            ->addActionLabel('Ajouter une image'),
+                            ->addActionLabel('Ajouter une image')
+                            ->maxItems(2), // <- limite max ici
+
                     ]),
 
                 Forms\Components\Section::make('À propos du produit')
@@ -223,8 +226,7 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail')
-                    ->label('Image')
+                ImageColumn::make('image')
                     ->square(),
 
                 Tables\Columns\TextColumn::make('name')

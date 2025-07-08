@@ -12,15 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loan_activities', function (Blueprint $table) {
+        Schema::create('expenses', function (Blueprint $table) {
             $table->uuid(column: 'id')->primary()->default(DB::raw('uuid_generate_v4()'));
-            $table->string('day');
-            $table->string('customer_name');
+            $table->string('description')->nullable();
             $table->decimal('amount', 15, 2);
-            $table->string('loan_type');
-            $table->timestamp('date');
-            $table->string('time');
-            $table->enum('status', ['disbursed', 'received', 'pending']);
             $table->timestamps();
         });
     }
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('loan_activities');
+        Schema::dropIfExists('expenses');
     }
 };

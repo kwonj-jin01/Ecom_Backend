@@ -19,7 +19,6 @@ class CategoryFactory extends Factory
                 'Vêtements', 'Chaussures', 'Accessoires', 'Bijoux',
                 'Sacs', 'Montres', 'Lunettes', 'Parfums'
             ]),
-            'image' => $this->faker->imageUrl(400, 300, 'fashion'),
         ];
     }
 }

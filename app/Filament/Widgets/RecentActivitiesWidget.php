@@ -2,60 +2,67 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Order;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use App\Models\LoanActivity;
 
 class RecentActivitiesWidget extends BaseWidget
 {
-    protected static ?string $heading = 'Recent Activities';
+    protected static ?string $heading = 'Commandes Récentes';
     protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(LoanActivity::query()->latest()->limit(10))
+            ->query(Order::query()->latest()->limit(10))
             ->columns([
                 Tables\Columns\IconColumn::make('status')
                     ->icon(fn(string $state): string => match ($state) {
-                        'disbursed' => 'heroicon-o-arrow-up-circle',
-                        'received' => 'heroicon-o-check-circle',
+                        'payée' => 'heroicon-o-check-circle',
+                        'livrée' => 'heroicon-o-truck',
+                        'annulée' => 'heroicon-o-x-circle',
                         default => 'heroicon-o-clock',
                     })
                     ->color(fn(string $state): string => match ($state) {
-                        'disbursed' => 'danger',
-                        'received' => 'success',
-                        default => 'gray',
+                        'payée' => 'success',
+                        'livrée' => 'info',
+                        'annulée' => 'danger',
+                        default => 'warning',
                     }),
 
-                Tables\Columns\TextColumn::make('day')
-                    ->label('Day'),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Client'),
 
-                Tables\Columns\TextColumn::make('customer_name')
-                    ->label('Customer Name'),
+                Tables\Columns\TextColumn::make('total')
+                    ->label('Montant')
+                    ->money('XOF', locale: 'fr_FR'),
 
-                Tables\Columns\TextColumn::make('amount')
-                    ->label('Amount')
-                    ->money('NGN'),
+                Tables\Columns\TextColumn::make('payment_method')
+                    ->label('Paiement'),
 
-                Tables\Columns\TextColumn::make('loan_type')
-                    ->label('Loan Type'),
-
-                Tables\Columns\TextColumn::make('date')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('Date')
-                    ->dateTime(),
+                    ->dateTime('d M Y - H:i'),
 
-                Tables\Columns\TextColumn::make('time')
-                    ->label('Time'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Statut')
+                    ->color(fn(string $state): string => match ($state) {
+                        'payée' => 'success',
+                        'livrée' => 'info',
+                        'annulée' => 'danger',
+                        'en_attente' => 'warning',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'payée' => 'Payée',
+                        'livrée' => 'Livrée',
+                        'annulée' => 'Annulée',
+                        'en_attente' => 'En attente',
+                        default => ucfirst($state),
+                    }),
 
-                Tables\Columns\BadgeColumn::make('status')
-                    ->label('Status')
-                    ->colors([
-                        'danger' => 'disbursed',
-                        'success' => 'received',
-                        'warning' => 'pending',
-                    ]),
+
             ])
             ->paginated(false);
     }
