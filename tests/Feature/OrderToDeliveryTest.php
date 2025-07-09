@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions; // Changement ici
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use App\Models\User;
@@ -12,22 +12,23 @@ use App\Models\Product;
 use App\Models\Payment;
 use App\Models\Invoice;
 use App\Models\Delivery;
+use Illuminate\Support\Arr;
 
 class OrderToDeliveryTest extends TestCase
 {
-    use RefreshDatabase;
+    // use DatabaseTransactions; // Au lieu de RefreshDatabase
 
     public function test_order_using_existing_products_until_delivery(): void
     {
         // Créer un utilisateur fictif
         $user = User::factory()->create();
 
-        // Vérifie qu'au moins un produit existe, sinon échoue le test
+        // Vérifier qu'au moins un produit existe
         $products = Product::all();
         $this->assertNotEmpty($products, 'Aucun produit existant trouvé dans la base de données');
 
-        // Choisir 5 produits existants
-        $selectedProducts = $products->random(min(5, $products->count()));
+        // Choisir 3 produits existants (au lieu de 5 pour éviter de trop polluer)
+        $selectedProducts = $products->random(min(3, $products->count()));
 
         foreach ($selectedProducts as $product) {
             $order = Order::create([
@@ -53,8 +54,8 @@ class OrderToDeliveryTest extends TestCase
             Payment::create([
                 'order_id' => $order->id,
                 'amount' => $product->price,
-                'method' => 'carte',
-                'status' => 'paid',
+                'method' => Arr::random(['carte', 'paypal', 'virement', 'especes']),
+                'status' => Arr::random(['en_attente', 'reussi', 'echoue', 'rembourse']),
                 'transaction_id' => Str::random(10),
                 'paid_at' => now(),
             ]);
@@ -72,7 +73,6 @@ class OrderToDeliveryTest extends TestCase
                 'transporteur' => 'DHL',
                 'statut' => 'livre',
                 'date_estimee' => now()->addDays(3),
-                'date_livraison_reelle' => now()->addDays(3),
             ]);
         }
 

@@ -14,12 +14,10 @@ class Delivery extends Model
         'transporteur',
         'statut',
         'date_estimee',
-        'date_livraison_reelle'
     ];
 
     protected $casts = [
         'date_estimee' => 'date',
-        'date_livraison_reelle' => 'datetime'
     ];
 
     protected static function boot()
