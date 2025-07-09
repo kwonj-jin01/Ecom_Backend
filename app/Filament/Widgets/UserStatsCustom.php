@@ -17,9 +17,7 @@ class UserStatsCustom extends Widget
     public function getStats(): array
     {
         $totalUsers = User::count();
-
         $usersWithOrders = User::whereHas('orders')->count();
-
         $orderRate = $totalUsers > 0
             ? round(($usersWithOrders / $totalUsers) * 100) . '%'
             : '0%';

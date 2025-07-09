@@ -9,21 +9,23 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class LoanStatsOverview extends BaseWidget
 {
+    protected static ?int $sort = 1;
+    protected static bool $isLazy = false; // Widget prioritaire, pas lazy
     protected function getStats(): array
     {
-        $totalVentes = Order::where('status', 'payée')->sum('total');
+        $totalVentes = Order::where('status', 'confirme')->sum('total');
         $commandesEnAttente = Order::where('status', 'en_attente')->count();
         $produitsRupture = Product::where('stock', '<', 1)->count();
         $totalCommandes = Order::count();
-        $commandesLivrees = Order::where('status', 'livrée')->count();
+        $commandesLivrees = Order::where('status', 'confirme')->count();
 
         return [
             Stat::make('Total Ventes', view('components.animated-counter', [
-                'value' => 10000,
+                'value' => $totalVentes,
                 'index' => 0,
             ]))
-                ->description('Chiffre d’affaires')
-                ->descriptionIcon('heroicon-o-currency-euro')
+                ->description('Chiffre d’affaires (FCFA)') // 👈 ici
+                ->descriptionIcon('heroicon-o-banknotes') // 👈 option plus neutre
                 ->color($totalVentes > 0 ? 'success' : 'danger')
                 ->chart([5, 9, 7, 6, 10, 12, 14])
                 ->extraAttributes([
@@ -31,8 +33,9 @@ class LoanStatsOverview extends BaseWidget
                     'data-index' => 0,
                 ]),
 
+
             Stat::make('Total Commandes', view('components.animated-counter', [
-                'value' => 1000,
+                'value' => $totalCommandes,
                 'index' => 1,
             ]))
                 ->description('Commandes reçues')
@@ -45,7 +48,7 @@ class LoanStatsOverview extends BaseWidget
                 ]),
 
             Stat::make('Commandes en attente', view('components.animated-counter', [
-                'value' => 1999,
+                'value' => $commandesEnAttente,
                 'index' => 2,
             ]))
                 ->description('À traiter')
@@ -58,7 +61,7 @@ class LoanStatsOverview extends BaseWidget
                 ]),
 
             Stat::make('Produits en rupture', view('components.animated-counter', [
-                'value' => 99,
+                'value' => $commandesLivrees,
                 'index' => 3,
             ]))
                 ->description('Stock à réapprovisionner')
@@ -71,7 +74,7 @@ class LoanStatsOverview extends BaseWidget
                 ]),
 
             Stat::make('Commandes Livrées', view('components.animated-counter', [
-                'value' => 55,
+                'value' => $produitsRupture,
                 'index' => 4,
             ]))
                 ->description('Commandes livrées avec succès')
@@ -85,5 +88,4 @@ class LoanStatsOverview extends BaseWidget
         ];
     }
 
-    protected static ?int $sort = 1;
 }

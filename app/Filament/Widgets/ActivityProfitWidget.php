@@ -19,7 +19,7 @@ class ActivityProfitWidget extends Widget
     public function mount(): void
     {
         // Calcul revenu = total commandes payées
-        $this->revenu = Order::where('status', 'payée')->sum('total');
+        $this->revenu = Order::where('status', 'confirme')->sum('total');
 
         // Dépenses fictives ou depuis une table `expenses`
         $this->depenses = Expense::sum('amount'); // ou une valeur statique si pas encore implémentée

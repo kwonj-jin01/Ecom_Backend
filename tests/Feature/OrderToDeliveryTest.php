@@ -2,82 +2,97 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions; // Changement ici
-use Illuminate\Support\Str;
 use Tests\TestCase;
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use App\Models\User;
+use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Product;
 use App\Models\Payment;
 use App\Models\Invoice;
 use App\Models\Delivery;
-use Illuminate\Support\Arr;
 
 class OrderToDeliveryTest extends TestCase
 {
-    // use DatabaseTransactions; // Au lieu de RefreshDatabase
-
-    public function test_order_using_existing_products_until_delivery(): void
+    public function test_multiple_users_orders_payments_and_deliveries(): void
     {
-        // Créer un utilisateur fictif
-        $user = User::factory()->create();
+        // Nombre d’utilisateurs / commandes que l’on veut créer
+        $usersCount = 50;
 
-        // Vérifier qu'au moins un produit existe
+        // S’assurer qu’il y a au moins un produit en base
         $products = Product::all();
         $this->assertNotEmpty($products, 'Aucun produit existant trouvé dans la base de données');
 
-        // Choisir 3 produits existants (au lieu de 5 pour éviter de trop polluer)
-        $selectedProducts = $products->random(min(3, $products->count()));
+        // --- Boucle principale : 1 utilisateur  => 1 commande de 3 produits (max) ---
+        for ($i = 0; $i < $usersCount; $i++) {
+            /** @var \App\Models\User $user */
+            $user = User::factory()->create();
 
-        foreach ($selectedProducts as $product) {
+            // Sélection aléatoire (max 3) de produits existants
+            $selectedProducts = $products->random(min(3, $products->count()));
+
+            // Total de la commande = somme des prix des produits choisis
+            $orderTotal = $selectedProducts->sum('price');
+
+            /** @var \App\Models\Order $order */
             $order = Order::create([
-                'id' => (string) Str::uuid(),
-                'user_id' => $user->id,
-                'status' => 'en_attente',
-                'total' => $product->price,
-                'shipping_address' => 'Rue 10, Cocody',
-                'shipping_city' => 'Abidjan',
-                'shipping_country' => 'Côte d\'Ivoire',
-                'shipping_zip' => '00225',
+                'id'                => (string) Str::uuid(),
+                'user_id'           => $user->id,
+                'status'            => Arr::random(['en_attente', 'confirme', 'expedie', 'livre', 'annule']),
+                'total'             => $orderTotal,
+                'shipping_address'  => 'Rue 10, Cocody',
+                'shipping_city'     => 'Abidjan',
+                'shipping_country'  => 'Côte d\'Ivoire',
+                'shipping_zip'      => '00225',
             ]);
 
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $product->id,
-                'quantity' => 1,
-                'size' => 'M',
-                'unit_price' => $product->price,
-                'total_price' => $product->price,
-            ]);
+            // Créer les OrderItem et additionner les prix
+            foreach ($selectedProducts as $product) {
+                OrderItem::create([
+                    'order_id'    => $order->id,
+                    'product_id'  => $product->id,
+                    'quantity'    => 1,
+                    'size'        => 'M',
+                    'unit_price'  => $product->price,
+                    'total_price' => $product->price,
+                ]);
+            }
 
+            // Paiement (méthode et statut aléatoires VALIDES)
             Payment::create([
-                'order_id' => $order->id,
-                'amount' => $product->price,
-                'method' => Arr::random(['carte', 'paypal', 'virement', 'especes']),
-                'status' => Arr::random(['en_attente', 'reussi', 'echoue', 'rembourse']),
+                'order_id'       => $order->id,
+                'amount'         => $orderTotal,
+                'method'         => Arr::random(['carte', 'paypal', 'virement', 'especes']),
+                'status'         => Arr::random(['en_attente', 'reussi', 'echoue', 'rembourse']),
                 'transaction_id' => Str::random(10),
-                'paid_at' => now(),
+                'paid_at'        => now(),
             ]);
 
+            // Facture
             Invoice::create([
-                'order_id' => $order->id,
+                'order_id'       => $order->id,
                 'invoice_number' => strtoupper(Str::random(8)),
-                'amount' => $product->price,
-                'issued_at' => now(),
+                'amount'         => $orderTotal,
+                'issued_at'      => now(),
             ]);
 
+            // Livraison
             Delivery::create([
-                'order_id' => $order->id,
+                'order_id'          => $order->id,
                 'adresse_livraison' => 'Rue 10, Cocody',
-                'transporteur' => 'DHL',
-                'statut' => 'livre',
-                'date_estimee' => now()->addDays(3),
+                'transporteur'      => 'DHL',
+                'statut'            => 'livre',
+                'date_estimee'      => now()->addDays(3),
             ]);
         }
 
-        $this->assertDatabaseCount('orders', $selectedProducts->count());
-        $this->assertDatabaseCount('deliveries', $selectedProducts->count());
+        // ----------------- Assertions globales -----------------
+        $this->assertDatabaseCount('users', $usersCount);
+        $this->assertDatabaseCount('orders', $usersCount);
+        $this->assertDatabaseCount('deliveries', $usersCount);
+
+        // Vérifier qu’il existe au moins une livraison au statut 'livre'
         $this->assertDatabaseHas('deliveries', ['statut' => 'livre']);
     }
 }

@@ -41,7 +41,6 @@ class LoanDashboard extends Page
             UserStatsCustom::class,
             ActivityProfitWidget::class,
             RecentActivitiesWidget::class,
-
         ];
     }
 }
