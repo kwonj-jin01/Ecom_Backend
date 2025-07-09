@@ -12,6 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+
         Schema::create('expenses', function (Blueprint $table) {
             $table->uuid(column: 'id')->primary()->default(DB::raw('uuid_generate_v4()'));
             $table->string('description')->nullable();

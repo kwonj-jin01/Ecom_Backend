@@ -15,6 +15,9 @@ return new class extends Migration
         /* ------------------------------------------------------------------
          |  PAYMENTS & INVOICES                                              |
          ------------------------------------------------------------------*/
+
+        Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
             $table->uuid('order_id')->unique();

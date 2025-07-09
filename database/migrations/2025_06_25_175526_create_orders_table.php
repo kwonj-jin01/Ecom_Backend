@@ -15,6 +15,8 @@ return new class extends Migration
         /* ------------------------------------------------------------------
          |  ORDERS & ORDER ITEMS                                             |
          ------------------------------------------------------------------*/
+        Schema::getConnection()->statement('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
             $table->uuid('user_id');
