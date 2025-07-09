@@ -1,26 +1,50 @@
 <?php
 
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Delivery extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'day',
-        'customer_name',
-        'amount',
-        'loan_type',
-        'date',
-        'time',
-        'status',
+        'order_id',
+        'adresse_livraison',
+        'transporteur',
+        'statut',
+        'date_estimee',
+        'date_livraison_reelle'
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
-        'date' => 'datetime',
+        'date_estimee' => 'date',
+        'date_livraison_reelle' => 'datetime'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function getStatutBadgeAttribute(): string
+    {
+        return match ($this->statut) {
+            'en_preparation' => 'warning',
+            'en_transit' => 'info',
+            'livre' => 'success',
+            'retarde' => 'danger'
+        };
+    }
 }

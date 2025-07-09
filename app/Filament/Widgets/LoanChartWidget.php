@@ -90,4 +90,14 @@ class LoanChartWidget extends ChartWidget
     {
         return 'line';
     }
+    protected function getOptions(): array
+    {
+        return [
+            'scales' => [
+                'y' => [
+                    'beginAtZero' => true, // ✅ Forcer l'axe Y à commencer à 0
+                ],
+            ],
+        ];
+    }
 }

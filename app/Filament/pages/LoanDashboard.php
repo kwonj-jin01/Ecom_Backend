@@ -16,9 +16,9 @@ use App\Models\User;
 class LoanDashboard extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
-    protected static ?string $title = 'Loan Dashboard';
+    protected static ?string $title = 'Tableau de board';
     protected static ?string $navigationLabel = 'Dashboard';
-    protected static ?string $slug = 'loan-dashboard'; // assure l'URL
+    protected static ?string $slug = 'tableau-de-board'; // assure l'URL
 
     protected static string $view = 'filament.pages.loan-dashboard'; // Crée cette vue Blade si nécessaire
 
@@ -41,6 +41,7 @@ class LoanDashboard extends Page
             UserStatsCustom::class,
             ActivityProfitWidget::class,
             RecentActivitiesWidget::class,
+
         ];
     }
 }

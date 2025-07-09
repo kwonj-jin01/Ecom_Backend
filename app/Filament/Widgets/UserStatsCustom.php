@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\User;
+use App\Models\Order;
 use Filament\Widgets\Widget;
 
 class UserStatsCustom extends Widget
@@ -14,20 +16,28 @@ class UserStatsCustom extends Widget
 
     public function getStats(): array
     {
+        $totalUsers = User::count();
+
+        $usersWithOrders = User::whereHas('orders')->count();
+
+        $orderRate = $totalUsers > 0
+            ? round(($usersWithOrders / $totalUsers) * 100) . '%'
+            : '0%';
+
         return [
             [
-                'title' => 'Utilisateurs Actifs',
-                'value' => '10,786',
-                'color' => 'bg-green-500',
-            ],
-            [
                 'title' => 'Utilisateurs Totaux',
-                'value' => '20,587',
-                'color' => 'bg-blue-500',
+                'value' => number_format($totalUsers, 0, ',', ' '),
+                'color' => 'bg-blue-600',
             ],
             [
-                'title' => 'Taux de Remboursement',
-                'value' => '80%',
+                'title' => 'Clients Ayant Commandé',
+                'value' => number_format($usersWithOrders, 0, ',', ' '),
+                'color' => 'bg-green-600',
+            ],
+            [
+                'title' => 'Taux de Clients Actifs',
+                'value' => $orderRate,
                 'color' => 'bg-yellow-500',
             ],
         ];

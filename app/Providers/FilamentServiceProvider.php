@@ -18,7 +18,7 @@ class FilamentServiceProvider extends ServiceProvider
                 /* Sidebar width */
                 .fi-sidebar {
                     width: 12rem !important;
-                    // background-color: #041643;
+                    background-color: #041643;
                     }
 
                 /*  card */
@@ -30,6 +30,27 @@ class FilamentServiceProvider extends ServiceProvider
                     border: 1px solid #e2e8f0;
                     transition: all 0.2s;
                     }
+                .bg-success {
+                    background-color: #f0fdf4; /* green-50 */
+                }
+
+                .bg-danger {
+                    background-color: #fef2f2; /* red-50 */
+                }
+
+                .bg-warning {
+                    background-color: #fffbeb; /* yellow-50 */
+                }
+
+                .bg-info {
+                    background-color: #f0f9ff; /* sky-50 */
+                }
+
+                .bg-primary {
+                    background-color: #eff6ff; /* blue-50 */
+                }
+
+
                 .fi-wi-stats-overview-stat:hover{
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                     transform: translateY(-2px);
@@ -112,6 +133,8 @@ class FilamentServiceProvider extends ServiceProvider
                     }
                 }
             </style>'
+
+
         );
     }
 }

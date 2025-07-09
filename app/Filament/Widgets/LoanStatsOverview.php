@@ -4,7 +4,6 @@ namespace App\Filament\Widgets;
 
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -19,60 +18,72 @@ class LoanStatsOverview extends BaseWidget
         $commandesLivrees = Order::where('status', 'livrée')->count();
 
         return [
-            Stat::make('Total Ventes', number_format($totalVentes, 0, ',', ' ') . ' F CFA')
+            Stat::make('Total Ventes', view('components.animated-counter', [
+                'value' => 10000,
+                'index' => 0,
+            ]))
                 ->description('Chiffre d’affaires')
                 ->descriptionIcon('heroicon-o-currency-euro')
                 ->color($totalVentes > 0 ? 'success' : 'danger')
                 ->chart([5, 9, 7, 6, 10, 12, 14])
                 ->extraAttributes([
-                    'class' => $totalVentes > 0
-                        ? 'bg-green-100 text-green-900 animate-fade-in transition duration-500 ease-out'
-                        : 'bg-red-100 text-red-900 animate-shake transition duration-500 ease-in',
+                    'class' => 'animated-stats-card ' . ($totalVentes > 0 ? 'bg-success' : 'bg-danger'),
+                    'data-index' => 0,
                 ]),
 
-
-            Stat::make('Total Commandes', $totalCommandes)
-                ->description('Toutes les commandes reçues')
+            Stat::make('Total Commandes', view('components.animated-counter', [
+                'value' => 1000,
+                'index' => 1,
+            ]))
+                ->description('Commandes reçues')
                 ->descriptionIcon('heroicon-m-clipboard-document-list')
                 ->color('primary')
                 ->chart([5, 9, 7, 6, 10, 12, 14])
                 ->extraAttributes([
-                    'class' => 'hover:scale-105 transform transition duration-300 ease-in-out',
+                    'class' => 'animated-stats-card bg-primary',
+                    'data-index' => 1,
                 ]),
 
-            Stat::make('Commandes en attente', $commandesEnAttente)
+            Stat::make('Commandes en attente', view('components.animated-counter', [
+                'value' => 1999,
+                'index' => 2,
+            ]))
                 ->description('À traiter')
                 ->descriptionIcon('heroicon-o-clock')
                 ->color($commandesEnAttente > 5 ? 'warning' : 'success')
                 ->chart([5, 9, 7, 6, 10, 12, 14])
                 ->extraAttributes([
-                    'class' => $commandesEnAttente > 5
-                        ? 'bg-yellow-100 text-yellow-800 animate-pulse'
-                        : 'bg-green-100 text-green-800',
+                    'class' => 'animated-stats-card ' . ($commandesEnAttente > 5 ? 'bg-warning' : 'bg-success'),
+                    'data-index' => 2,
                 ]),
 
-            Stat::make('Produits en rupture', $produitsRupture)
+            Stat::make('Produits en rupture', view('components.animated-counter', [
+                'value' => 99,
+                'index' => 3,
+            ]))
                 ->description('Stock à réapprovisionner')
                 ->descriptionIcon('heroicon-o-exclamation-triangle')
                 ->color($produitsRupture > 0 ? 'danger' : 'info')
                 ->chart([5, 9, 7, 6, 10, 12, 14])
                 ->extraAttributes([
-                    'class' => $produitsRupture > 0
-                        ? 'bg-red-100 text-red-900 animate-bounce'
-                        : 'bg-green-100 text-green-800',
+                    'class' => 'animated-stats-card ' . ($produitsRupture > 0 ? 'bg-danger' : 'bg-info'),
+                    'data-index' => 3,
                 ]),
 
-            Stat::make('Commandes Livrées', $commandesLivrees)
+            Stat::make('Commandes Livrées', view('components.animated-counter', [
+                'value' => 55,
+                'index' => 4,
+            ]))
                 ->description('Commandes livrées avec succès')
                 ->descriptionIcon('heroicon-m-truck')
                 ->color('warning')
                 ->chart([5, 9, 7, 6, 10, 12, 14])
                 ->extraAttributes([
-                    'class' => 'bg-blue-100 text-blue-800 hover:bg-blue-200 transition duration-300 ease-in-out',
+                    'class' => 'animated-stats-card bg-warning',
+                    'data-index' => 4,
                 ]),
         ];
     }
-
 
     protected static ?int $sort = 1;
 }
