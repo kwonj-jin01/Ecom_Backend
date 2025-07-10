@@ -12,7 +12,7 @@ class Category extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['matricule', 'name'];
     protected static function booted()
     {
         static::creating(function ($category) {

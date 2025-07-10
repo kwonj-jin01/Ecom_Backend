@@ -36,7 +36,7 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
             $table->uuid('order_id')->unique();
-            $table->string('invoice_number')->unique();
+            $table->string('invoice_number')->unique(); // ✅ Numéro de facture unique
             $table->decimal('amount', 10, 2);
             $table->timestamp('issued_at')->useCurrent();
             $table->timestamps();

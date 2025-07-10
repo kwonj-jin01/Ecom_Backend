@@ -19,10 +19,9 @@ return new class extends Migration
 
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
-            $table->string('order_number')->unique(); // ✅ Ajout du champ lisible
-
+            $table->string('order_number')->unique(); // ✅ Numéro de commande unique
             $table->uuid('user_id');
-            $table->enum('status', ['en_attente', 'confirme','annule'])->default('en_attente');
+            $table->enum('status', ['en_attente', 'confirme', 'en_production', 'pret', 'expedie', 'livre', 'annule'])->default('en_attente');
             $table->decimal('total', 10, 2);
             $table->text('shipping_address')->nullable();
             $table->string('shipping_city')->nullable();
@@ -33,6 +32,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->index(['user_id', 'status']);
             $table->index('created_at');
+            $table->index('order_number');
         });
 
         Schema::create('order_items', function (Blueprint $table) {

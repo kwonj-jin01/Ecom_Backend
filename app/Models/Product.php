@@ -13,6 +13,7 @@ class Product extends Model
     public $incrementing = false;
 
     protected $fillable = [
+        'matricule',
         'title',
         'name',
         'description',

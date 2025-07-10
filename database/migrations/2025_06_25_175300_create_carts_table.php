@@ -16,6 +16,7 @@ return new class extends Migration
 
         Schema::create('cart_items', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
+            $table->string('numero_panier')->unique(); // ✅ Numéro unique pour le panier
             $table->uuid('user_id');
             $table->uuid('product_id');
             $table->integer('quantity')->default(1);
@@ -28,6 +29,7 @@ return new class extends Migration
             // Index composé pour éviter les doublons dans le panier
             $table->unique(['user_id', 'product_id', 'size']);
             $table->index('user_id');
+            $table->index('numero_panier');
         });
     }
 

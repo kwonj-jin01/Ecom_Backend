@@ -27,6 +27,7 @@ class ProductController extends Controller
 
             return response()->json([
                 'status' => 'success',
+                'count' => $products->count(), // ✅ nombre total d'éléments
                 'data' => ProductResource::collection($products)
             ]);
         } catch (\Exception $e) {

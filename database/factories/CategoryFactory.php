@@ -15,9 +15,16 @@ class CategoryFactory extends Factory
     {
         return [
             'id' => Str::uuid(),
+            'matricule' => 'CAT-' . strtoupper(Str::random(6)),
             'name' => $this->faker->randomElement([
-                'Vêtements', 'Chaussures', 'Accessoires', 'Bijoux',
-                'Sacs', 'Montres', 'Lunettes', 'Parfums'
+                'Vêtements',
+                'Chaussures',
+                'Accessoires',
+                'Bijoux',
+                'Sacs',
+                'Montres',
+                'Lunettes',
+                'Parfums'
             ]),
         ];
     }

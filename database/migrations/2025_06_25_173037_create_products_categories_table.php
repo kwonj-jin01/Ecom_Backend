@@ -20,14 +20,17 @@ return new class extends Migration
 
         Schema::create('categories', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
+            $table->string('matricule')->unique(); // ✅ Matricule unique pour chaque catégorie
             $table->string('name');
             $table->timestamps();
 
             $table->index('name');
+            $table->index('matricule');
         });
 
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
+            $table->string('matricule')->unique(); // ✅ Matricule unique pour chaque produit
             $table->string('title');
             $table->string('name');
             $table->text('description');
@@ -56,6 +59,7 @@ return new class extends Migration
             $table->index('brand');
             $table->index('gender');
             $table->index(['price', 'is_on_sale']);
+            $table->index('matricule');
         });
 
         Schema::create('product_images', function (Blueprint $table) {
