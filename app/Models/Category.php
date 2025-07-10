@@ -13,7 +13,14 @@ class Category extends Model
     public $incrementing = false;
 
     protected $fillable = ['name'];
-
+    protected static function booted()
+    {
+        static::creating(function ($category) {
+            if (empty($category->id)) {
+                $category->id = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
     public function products()
     {
         return $this->hasMany(Product::class);
