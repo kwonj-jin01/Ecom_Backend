@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\Builder;
 class DeliveryResource extends Resource
 {
     protected static ?string $model = Delivery::class;
-    protected static ?string $navigationIcon = 'heroicon-o-truck';
     protected static ?string $navigationLabel = 'Livraisons';
-    protected static ?string $pluralLabel = 'Livraisons';
+    protected static ?string $navigationGroup = 'Transactions';
+    protected static ?string $navigationIcon = 'heroicon-o-truck';
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
