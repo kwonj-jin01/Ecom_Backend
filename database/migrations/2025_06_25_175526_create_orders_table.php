@@ -19,8 +19,10 @@ return new class extends Migration
 
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('uuid_generate_v4()'));
+            $table->string('order_number')->unique(); // ✅ Ajout du champ lisible
+
             $table->uuid('user_id');
-            $table->enum('status', ['en_attente', 'confirme', 'expedie', 'livre', 'annule'])->default('en_attente');
+            $table->enum('status', ['en_attente', 'confirme','annule'])->default('en_attente');
             $table->decimal('total', 10, 2);
             $table->text('shipping_address')->nullable();
             $table->string('shipping_city')->nullable();

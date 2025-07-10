@@ -3,11 +3,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Delivery extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'order_id',
         'adresse_livraison',
@@ -43,6 +46,16 @@ class Delivery extends Model
             'en_transit' => 'info',
             'livre' => 'success',
             'retarde' => 'danger'
+        };
+    }
+
+    public function getStatutLabelAttribute(): string
+    {
+        return match ($this->statut) {
+            'en_preparation' => 'En préparation',
+            'en_transit' => 'En transit',
+            'livre' => 'Livré',
+            'retarde' => 'Retardé'
         };
     }
 }

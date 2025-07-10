@@ -39,7 +39,7 @@ class OrderToDeliveryTest extends TestCase
             $order = Order::create([
                 'id'                => (string) Str::uuid(),
                 'user_id'           => $user->id,
-                'status'            => Arr::random(['en_attente', 'confirme', 'expedie', 'livre', 'annule']),
+                'status'            => Arr::random(['en_attente', 'confirme', 'annule']),
                 'total'             => $orderTotal,
                 'shipping_address'  => 'Rue 10, Cocody',
                 'shipping_city'     => 'Abidjan',
