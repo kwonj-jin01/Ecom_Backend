@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\GoogleAuthController;
@@ -26,6 +27,10 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 
 // Routes protégées
 Route::middleware('auth:sanctum')->group(function () {
+ Route::post('/orders', [OrderController::class, 'store']);
+    Route::get('/orders', [OrderController::class, 'getUserOrders']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+    Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);

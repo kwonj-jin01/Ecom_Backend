@@ -14,14 +14,25 @@ class RegisterRequest extends FormRequest
 
     public function rules()
     {
-         return [
-            'first_name'     => 'required|string|max:60',
-            'last_name'      => 'required|string|max:60',
-            'email'          => 'required|email|unique:users,email',
-            'password'       => 'required|confirmed|min:8',
-            'phone'          => 'nullable|string|max:30',
-            'country'        => 'nullable|string|max:80',
-            'sport_type'     => 'nullable|string|max:80',
+        return [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'first_name.required' => 'First name is required',
+            'last_name.required' => 'Last name is required',
+            'email.required' => 'Email is required',
+            'email.email' => 'Please enter a valid email address',
+            'email.unique' => 'An account with this email already exists',
+            'password.required' => 'Password is required',
+            'password.min' => 'Password must be at least 8 characters',
+            'password.confirmed' => 'Password confirmation does not match',
         ];
     }
 }

@@ -1,32 +1,30 @@
 <?php
+// app/Models/User.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuids;
-    /**
-     * Indique que les IDs sont des UUIDs
-     */
-    public $incrementing = false;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    // If using UUIDs as primary keys
     protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'google_id',
-        'avatar',
         'phone',
         'country',
         'sport_type',
-        'role',
+        'newsletter',
     ];
 
     protected $hidden = [
@@ -34,42 +32,27 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => 'string', // ou créer un enum si vous préférez
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'newsletter' => 'boolean',
+    ];
 
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
-
-    public function cartItems()
-    {
-        return $this->hasMany(CartItem::class);
-    }
-
+    // Auto-generate UUID when creating new users
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
             if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
+                $model->id = Str::uuid();
             }
         });
     }
-    public function scopeAdmins($query)
-    {
-        return $query->where('role', 'admin');
-    }
 
-    public function scopeUsers($query)
+    // Optional: Add accessor for full name
+    public function getFullNameAttribute()
     {
-        return $query->where('role', 'user');
+        return "{$this->first_name} {$this->last_name}";
     }
 }

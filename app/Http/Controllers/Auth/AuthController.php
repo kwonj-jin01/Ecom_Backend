@@ -12,30 +12,52 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        $data = $request->validated();
+        try {
+            $data = $request->validated();
 
-        $user = User::create([
-            'name'       => "{$data['first_name']} {$data['last_name']}",
-            'email'      => $data['email'],
-            'password'   => Hash::make($data['password']),
-            'phone'      => $data['phone']     ?? null,
-            'country'    => $data['country']   ?? null,
-            'sport_type' => $data['sport_type'] ?? null,
-        ]);
+            // Log the incoming data for debugging
+            Log::info('Registration attempt', ['data' => $data]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+            $user = User::create([
+                'id'         => Str::uuid(), // Explicitly set UUID if needed
+                'name'       => "{$data['first_name']} {$data['last_name']}",
+                'email'      => $data['email'],
+                'password'   => Hash::make($data['password']),
+            ]);
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-            'token_type' => 'Bearer',
-        ], 201);
+            Log::info('User created successfully', ['user_id' => $user->id]);
+
+            // Create token
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Registration successful',
+                'user' => $user,
+                'token' => $token,
+                'token_type' => 'Bearer',
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error('Registration error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'data' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Registration failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 
