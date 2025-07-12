@@ -10,6 +10,10 @@ use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
+
+    /**
+     * Créer une commande effectue la commande finale
+     */
     public function store(Request $request)
     {
         // Validation des données

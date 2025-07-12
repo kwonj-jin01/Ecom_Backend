@@ -19,4 +19,14 @@ class LoginRequest extends FormRequest
             'password' => 'required|string',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'L\'email est obligatoire.',
+            'email.email' => 'Le format de l\'email est invalide.',
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.min' => 'Le mot de passe doit contenir au moins 6 caractères.',
+        ];
+    }
 }
